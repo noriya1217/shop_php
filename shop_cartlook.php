@@ -18,33 +18,34 @@ if (isset($_SESSION['member_login']) == false) {
   <body>
     <?php
     try {
-        $pro_code = $_GET['procode'];
+        $cart = $_SESSION['cart'];
+        $max = count($cart);
+        // var_dump($cart);
+        // exit();
+
         $dsn = 'mysql:dbname=shop;host=localhost;charset=utf8';
         $user = 'root';
         $password = '';
         $dbh = new PDO($dsn, $user, $password);
         $dbh -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        $sql = 'SELECT name, price, gazou FROM mst_product WHERE code=?';
-        $stmt = $dbh -> prepare($sql);
-        $data[] = $pro_code;
-        $stmt -> execute($data);
+        foreach ($cart as $key => $val) {
+            $sql = 'SELECT code, name, price, gazou FROM mst_product WHERE code = ?';
+            $stmt = $dbh -> prepare($sql);
+            $data[0] = $val;
+            $stmt -> execute($data);
 
-        $rec = $stmt -> fetch(PDO::FETCH_ASSOC);
-        $pro_name = $rec['name'];
-        $pro_price = $rec['price'];
-        $pro_gazou_name = $rec['gazou'];
+            $rec = $stmt -> fetch(PDO::FETCH_ASSOC);
 
-        $dbh = null;
-
-        if ($pro_gazou_name == '') {
-            $disp_gazou = '画像なし';
-        } else {
-            $disp_gazou = '<img src="../product/gazou/'.$pro_gazou_name.'">';
+            $pro_name[] = $rec['name'];
+            $pro_price[] = $rec['price'];
+            if ($rec['gazou'] == '') {
+                $pro_gazou[] = '';
+            } else {
+                $pro_gazou[] = '<img src="../product/gazou/'.$rec['gazou'].'">';
+            }
         }
-
-        echo '<a href="shop_cartin.php?procode='.$pro_code.'">カートに入れる</a><br><br>';
-
+        $dbh = null;
     }
     catch (Exception $e) {
         print 'ただいま障害により大変ご迷惑をお掛けしております。';
@@ -52,12 +53,10 @@ if (isset($_SESSION['member_login']) == false) {
     }
     ?>
 
-    商品情報参照<br /><br />
-    商品コード<br />
-    <?php print $pro_code; ?><br /><br />
-    商品名：<?php print $pro_name; ?><br><br>
-    価格：<?php echo $pro_price; ?>円<br><br>
-    商品画像：<?php echo $disp_gazou; ?><br><br>
+    カートの中身<br>
+    <?php for ($i = 0; $i < $max; $i++) { ?>
+        <?php echo $pro_name[$i].$pro_gazou[$i].$pro_price[$i].'円'.'<br>'; ?>
+    <?php } ?>
 
     <form>
         <input type='button' onclick="history.back()" value="戻る">
