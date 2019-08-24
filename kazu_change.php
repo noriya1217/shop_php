@@ -9,6 +9,15 @@ $post = sanitize($_POST);
 
 $max = $post['max'];
 for ($i = 0; $i < $max; $i++) {
+    if (preg_match("/\A[0-9]+\z/", $post['kazu'.$i]) == 0) {
+        echo '数量に誤りがあります。<br>';
+        echo '<a href="shop_cartlook.php">カートに戻る</a>';
+        exit();
+    } else if ($post['kazu'.$i] < 1 || 10 < $post['kazu'.$i]) {
+        echo '数量は1〜10の間を入力してください。<br>';
+        echo '<a href="shop_cartlook.php">カートに戻る</a>';
+        exit();
+    }
     $kazu[] = $post['kazu'.$i];
 }
 
