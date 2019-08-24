@@ -18,10 +18,22 @@ if (isset($_SESSION['member_login']) == false) {
   <body>
     <?php
     try {
-        $cart = $_SESSION['cart'];
-        $max = count($cart);
+        if (isset($_SESSION['cart']) == true) {
+            $cart = $_SESSION['cart'];
+            $kazu = $_SESSION['kazu'];
+            $max = count($cart);
+        } else {
+            $max = 0;
+        }
+    
         // var_dump($cart);
         // exit();
+
+        if ($max == 0) {
+            echo 'カートに商品が入っていません。<br><br>';
+            echo '<a href="shop_list.php">商品一覧へ戻る</a>';
+            exit();
+        }
 
         $dsn = 'mysql:dbname=shop;host=localhost;charset=utf8';
         $user = 'root';
@@ -54,11 +66,19 @@ if (isset($_SESSION['member_login']) == false) {
     ?>
 
     カートの中身<br>
-    <?php for ($i = 0; $i < $max; $i++) { ?>
-        <?php echo $pro_name[$i].$pro_gazou[$i].$pro_price[$i].'円'.'<br>'; ?>
-    <?php } ?>
+    <form method='post' action='kazu_change.php'>
+        <?php for ($i = 0; $i < $max; $i++) { ?>
+            <?php echo $pro_name[$i]; ?>
+            <?php echo $pro_gazou[$i]; ?>
+            <?php echo $pro_price[$i].'円'; ?>
+            <input type='text' name='kazu<?php print $i; ?>' value='<?php print $kazu[$i]; ?>'>
+            <?php echo $pro_price[$i] * $kazu[$i].'円'; ?>
+            <input type='checkbox' name='sakujo<?php print $i; ?>'>
+            <br>
+        <?php } ?>
 
-    <form>
+        <input type='hidden' name='max' value='<?php print $max; ?>'>
+        <input type='submit' value='数量変更'><br>
         <input type='button' onclick="history.back()" value="戻る">
     </form>
 
