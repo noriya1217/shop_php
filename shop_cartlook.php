@@ -92,6 +92,8 @@ if (isset($_SESSION['member_login']) == false) {
         <input type='submit' value='数量変更'><br>
         <input type='button' onclick="history.back()" value="戻る">
     </form>
+    <br>
+    <a href="shop_form.html">購入手続きに進む</a><br>
 
   </body>
 </html>
