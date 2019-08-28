@@ -23,6 +23,11 @@
             $address = $post['address'];
             $tel = $post['tel'];
 
+            $chumon = $post['chumon'];
+            $pass = $post['pass'];
+            $danjo = $post['danjo'];
+            $birth = $post['birth'];
+
             echo $onamae.'様<br>';
             echo 'ご注文ありがとうございました。<br>';
             echo $email.'にメールを送信しましたのでご確認願います。<br>';
@@ -73,14 +78,42 @@
                 $honbun .= $shokei."円\n";
             }
 
-            $sql = 'LOCK TABLES dat_sales WRITE, dat_sales_product WRITE';
+            $sql = 'LOCK TABLES dat_sales WRITE, dat_sales_product WRITE, dat_member WRITE';
             $stmt = $dbh -> prepare($sql);
             $stmt -> execute();
+
+            $lastmembercode = 0;
+            if ($chumon == 'chumontouroku') {
+                $sql = 'INSERT INTO dat_member(password, name, email, postal1, postal2, address, tel, danjo, born)
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                $stmt = $dbh -> prepare($sql);
+                $data = array();
+                $data[] = md5($pass);
+                $data[] = $onamae;
+                $data[] = $email;
+                $data[] = $postal1;
+                $data[] = $postal2;
+                $data[] = $address;
+                $data[] = $tel;
+                if ($danjo == 'dan') {
+                    $data[] = 1;
+                } else {
+                    $data[] = 2;
+                }
+                $data[] = $birth;
+                $stmt -> execute($data);
+
+                $sql = 'SELECT LAST_INSERT_ID()';
+                $stmt = $dbh -> prepare($sql);
+                $stmt -> execute();
+                $rec = $stmt -> fetch(PDO::FETCH_ASSOC);
+                $lastmembercode = $rec['LAST_INSERT_ID()'];
+            }
 
             $sql = 'INSERT INTO dat_sales (code_member, name, email, postal1, postal2, address, tel) VALUES (?, ?, ?, ?, ?, ?, ?)';
             $stmt = $dbh -> prepare($sql);
             $data = array();
-            $data[] = 0;
+            $data[] = $lastmembercode;
             $data[] = $onamae;
             $data[] = $email;
             $data[] = $postal1;
@@ -112,6 +145,13 @@
 
             $dbh = null;
 
+            if ($chumon == 'chumontouroku') {
+                print '会員登録が完了いたしました。<br>';
+                print '次回からメールアドレスとパスワードでログインして下さい。<br>';
+                print 'ご注文が簡単にできるようになります。<br>';
+                print '<br>';
+            }
+
             $honbun .= "送料は無料です。\n";
             $honbun .= "---------------\n";
             $honbun .= "\n";
@@ -125,6 +165,12 @@
             $honbun .= "◯◯県六丸郡六丸村123-4\n";
             $honbun .= "電話:090-6060-1111\n";
             $honbun .= "メール:info@rokumarunouen.com\n";
+            if ($chumon == 'chumontouroku') {
+                $honbun .= "会員登録が完了いたしました。\n";
+                $honbun .= "次回からメールアドレスとパスワードでログインしてください。\n";
+                $honbun .= "ご注文が簡単にできるようになります。\n";
+                $honbun .= "\n";
+            }
             $honbun .= "　　　　　　　　　　　　　　　　　　　　\n";
             // print '<br>';
             // print nl2br($honbun);
