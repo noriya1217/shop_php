@@ -94,6 +94,11 @@ if (isset($_SESSION['member_login']) == false) {
     </form>
     <br>
     <a href="shop_form.html">購入手続きに進む</a><br>
+    <?php
+    if (isset($_SESSION["member_login"]) == true) {
+        echo '<a href="shop_kantan_check.php">会員かんたん注文へ進む</a><br>';
+    }
+    ?>
 
   </body>
 </html>
