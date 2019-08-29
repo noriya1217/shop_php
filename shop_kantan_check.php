@@ -32,21 +32,43 @@ if (isset($_SESSION['member_login']) == false) {
 
         $dbh = null;
 
-        if ($okflg == true) {
-            echo '<form method="post" action="shop_form_done.php">';
-            echo '<input type="hidden" name="onamae" value="'.$onamae.'">';
-            echo '<input type="hidden" name="email" value="'.$email.'">';
-            echo '<input type="hidden" name="postal1" value="'.$postal1.'">';
-            echo '<input type="hidden" name="postal2" value="'.$postal2.'">';
-            echo '<input type="hidden" name="address" value="'.$address.'">';
-            echo '<input type="hidden" name="tel" value="'.$tel.'">';
-            echo '<input type="hidden" name="pass" value="'.$pass.'">';
-            echo '<input type="hidden" name="danjo" value="'.$danjo.'">';
-            echo '<input type="hidden" name="birth" value="'.$birth.'">';
-            echo '<input type="button" onclick="history.back()" value="戻る">';
-            echo '<input type="submit" value="OK">';
-            echo '</form>';
-        } 
+        $onamae = $rec['name'];
+        $email = $rec['email'];
+        $postal1 = $rec['postal1'];
+        $postal2 = $rec['postal2'];
+        $address = $rec['address'];
+        $tel = $rec['tel'];
+
+        print 'お名前<br>';
+        print $email;
+        print '<br><br>';
+
+        print 'メールアドレス<br>';
+        print $email;
+        print '<br><br>';
+
+        print '郵便番号<br>';
+        print $postal1.'-'.$postal2;
+        print '<br><br>';
+
+        print '住所<br>';
+        print $address;
+        print '<br><br>';
+
+        print '電話番号<br>';
+        print $tel;
+        print '<br><br>';
+
+        echo '<form method="post" action="shop_kantan_done.php">';
+        echo '<input type="hidden" name="onamae" value="'.$onamae.'">';
+        echo '<input type="hidden" name="email" value="'.$email.'">';
+        echo '<input type="hidden" name="postal1" value="'.$postal1.'">';
+        echo '<input type="hidden" name="postal2" value="'.$postal2.'">';
+        echo '<input type="hidden" name="address" value="'.$address.'">';
+        echo '<input type="hidden" name="tel" value="'.$tel.'">';
+        echo '<input type="button" onclick="history.back()" value="戻る">';
+        echo '<input type="submit" value="OK">';
+        echo '</form>';
         ?>
     </body>
 </html>
